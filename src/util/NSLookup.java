@@ -15,7 +15,7 @@ public class NSLookup {
 			try {
 				BufferedReader br = new BufferedReader(new InputStreamReader(System.in, "utf-8"));
 				hostname = br.readLine();
-				if(hostname.equals("exit")) {
+				if("exit".equals(hostname)) {
 					br.close();
 					System.exit(0);
 				}

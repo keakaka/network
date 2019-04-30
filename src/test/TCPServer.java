@@ -6,6 +6,7 @@ import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 
 public class TCPServer {
 	public static void main(String[] args) {
@@ -14,13 +15,17 @@ public class TCPServer {
 			// 1. 서버 소켓 생성
 			serverSocket = new ServerSocket();
 			
+			// 1-1. Time-Wait 시간에 소켓에 포트번호 할당을 가능하게 하기 위해
+			serverSocket.setReuseAddress(true);
+			
 			// 2. Binding
 			// : Socket에 SocketAddress(IPAddress + Port) 를 바인딩 한다.
 			
 //			InetAddress inetAddress = InetAddress.getLocalHost();
 //			String localhost = inetAddress.getHostAddress();
 //			serverSocket.bind(new InetSocketAddress(localhost, 5000));
-			serverSocket.bind(new InetSocketAddress("0.0.0.0", 5000));
+			serverSocket.bind(new InetSocketAddress("0.0.0.0", 6000));
+			
 			// 3. Accept
 			// : Client의 연결요청을 기다린다.
 			Socket socket = serverSocket.accept(); // Blocking
@@ -30,7 +35,6 @@ public class TCPServer {
 			int remotePort = inetRemoteSocketAddress.getPort();
 			
 			System.out.println("[server] connected by client[" + remoteHostAddress + ":" + remotePort + "]");
-			
 			try {
 				// 4. I/O Stream 받아오기
 				InputStream is = socket.getInputStream();
@@ -52,10 +56,15 @@ public class TCPServer {
 					System.out.println("[server] received : " + data);
 					
 					// 6. Write Data
+					Thread.sleep(2000);
 					os.write(data.getBytes("utf-8"));
 				}
+			} catch (SocketException e) {
+				System.out.println("[server] sudden closed by client");
 			} catch (IOException e) {
 				e.printStackTrace();	
+			} catch (InterruptedException e) {
+				e.printStackTrace();
 			} finally {
 				try {
 					if(socket != null && !socket.isClosed()) {
