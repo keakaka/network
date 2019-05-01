@@ -3,6 +3,7 @@ package http;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
@@ -14,12 +15,8 @@ public class RequestHandler extends Thread {
 	private static String documentRoot = "";
 	
 	static {
-		try {
-			documentRoot = new File(RequestHandler.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getPath();
-			documentRoot += "/webapp";
-		} catch (URISyntaxException e) {
-			e.printStackTrace();
-		}
+		documentRoot = RequestHandler.class.getClass().getResource("/webapp").getPath();
+//		InputStream is = getClass().getResourceAsStream("/webapp/index.html");
 	}
 	private Socket socket;
 	public RequestHandler( Socket socket ) {
