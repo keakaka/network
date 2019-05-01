@@ -22,12 +22,10 @@ public class EchoServerReceiveThread extends Thread {
 		String remoteHostAddress = inetRemoteSocketAddress.getAddress().getHostAddress();
 		int remotePort = inetRemoteSocketAddress.getPort();
 		EchoServer.log("connected by client [" + remoteHostAddress + ":" + remotePort +"]");
-		
 		try {
 			// 4. I/O Stream 받아오기
 			BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream(), "utf-8"));
 			PrintWriter pw = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(), "utf-8"), true);
-			
 			while(true) {
 				// 5. 데이터 읽기
 				String data = br.readLine();

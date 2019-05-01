@@ -7,10 +7,20 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 
 public class RequestHandler extends Thread {
-	private static final String DOCUMENT_ROUTE = "./webapp";
+	private static String documentRoot = "";
+	
+	static {
+		try {
+			documentRoot = new File(RequestHandler.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getPath();
+			documentRoot += "/webapp";
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+		}
+	}
 	private Socket socket;
 	public RequestHandler( Socket socket ) {
 		this.socket = socket;
@@ -83,10 +93,10 @@ public class RequestHandler extends Thread {
 	private void responseError(OutputStream os, int errorCode) throws IOException {
 		File file = null;
 		if(errorCode == 404) {
-			file = new File(DOCUMENT_ROUTE+"/error/404.html");
+			file = new File(documentRoot+"/error/404.html");
 			os.write("HTTP/1.1 404 File Not Found\r\n".getBytes("utf-8"));
 		}else {
-			file = new File(DOCUMENT_ROUTE+"/error/400.html");
+			file = new File(documentRoot+"/error/400.html");
 			os.write("HTTP/1.1 400 Bad Request\r\n".getBytes("utf-8"));
 		}
 		byte[] body = Files.readAllBytes(file.toPath());
@@ -104,7 +114,7 @@ public class RequestHandler extends Thread {
 		if("/".equals(url)) {
 			url = "/index.html";
 		}
-		File file = new File(DOCUMENT_ROUTE + url);
+		File file = new File(documentRoot + url);
 		if(file.exists() == false) {
 			responseError(os, 404);
 			/* 응답 예시

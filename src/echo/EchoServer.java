@@ -12,7 +12,6 @@ public class EchoServer {
 		try {
 			// 1. 서버 소켓 생성
 			serverSocket = new ServerSocket();
-			
 			// 2. Binding : Socket에 SocketAddress(IPAddress + Port) 를 바인딩 한다.
 			serverSocket.bind(new InetSocketAddress("0.0.0.0", PORT));
 			log("server starts...[port : " + PORT + "]");
@@ -20,7 +19,6 @@ public class EchoServer {
 			while(true) {
 				// 3. Accept : Client의 연결요청을 기다린다.
 				Socket socket = serverSocket.accept(); // Blocking
-				
 				Thread thread = new EchoServerReceiveThread(socket);
 				thread.start();
 			}
